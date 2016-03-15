@@ -139,3 +139,22 @@ li {
     background: white;
     box-shadow: 0 0 20px #FF4500;
 }
+
+/* a big background reminder */
+.reminder {
+    text-align: center;
+    border: 5px darkgrey dashed;
+    border-radius: 20px;
+    height: 50vh;
+    padding-top: 20vh;
+    color: darkgrey;
+}
+.animate-show {
+  opacity: 1;
+}
+.animate-show.ng-hide-add, .animate-show.ng-hide-remove {
+  transition: all linear 0.5s;
+}
+.animate-show.ng-hide {
+  opacity: 0;
+}
