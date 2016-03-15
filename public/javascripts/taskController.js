@@ -45,6 +45,17 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
                 break;
         }
     }
+
+    // permenent remove a deleted task, or temporary mark a normal task
+    $scope.onRemove = function(task) {
+        if(task.status === "deleted") {
+            var index = $scope.tasks.indexOf(task);
+            $scope.tasks.splice(index, 1);
+        }
+        else {
+            task.status = "deleted";
+        }
+    }
     
 
 }]);

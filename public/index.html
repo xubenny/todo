@@ -58,7 +58,7 @@
             <hr>
             
             <!-- Table body, repeat rows by using ng-repeat -->
-            <div class="row tableRow {{task.status}}" ng-repeat="task in tasks" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
+            <div class="row tableRow animate-list {{task.status}}" ng-repeat="task in tasks" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
                  <!-- task number -->
                 <div class="col-xs-2 col-md-1 grey-color align-right margin-top-xs margin-bottom-xs">
                     <span class="glyphicon" ng-class="statusIcon[task.status]"></span>
@@ -79,7 +79,7 @@
                         <span class="glyphicon glyphicon-edit"></span>
                     </button>
                     <button type="button" class="btn btn-default btn-lg btn-remove">
-                        <span class="glyphicon glyphicon-remove"></span>
+                        <span class="glyphicon glyphicon-remove" ng-click="onRemove(task)"></span>
                     </button>
                 </div>
 
