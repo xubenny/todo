@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="todoApp">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <!------------------- external library-------------------------------->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+        <!-- for sortable.js -->
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+
+        <script src="https://code.angularjs.org/1.5.0-rc.0/angular-animate.min.js"></script> 
+
+        <!------------------- App js and css file ---------------------------->
+        <script src="javascripts/taskController.js"></script>
+        <link rel="stylesheet" href="stylesheets/style.css">
+    </head>
+    
+    <body>
+
+        <!------------------- Navigation bar and menu ------------------------>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;Todo</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#" data-toggle="modal" data-target="#signin">Sign in</a></li>
+                        <li><a href="#" data-toggle="modal" data-target="#signup">Join</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-------------------------- main content --------------------------->
+        <div class="container" id="mainContainer" ng-controller="taskController">
+            
+            <!-- Title -->
+            <h1 class="center margin-top-md margin-bottom-md"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;To Do List</h1>
+            
+            
+            <!-- Table header -->
+            <div class="row" id="tableHead">
+                <div class="col-xs-2 col-md-1">#</div>
+                <div class="col-xs-6 col-md-8">Tasks</div>
+                <div class="col-xs-4 col-md-3">Action</div>
+            </div> <!-- end of Table header -->
+            <hr>
+            
+            <!-- Table body, repeat rows by using ng-repeat -->
+            <div class="row tableRow {{task.status}}" ng-repeat="task in tasks" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
+                 <!-- task number -->
+                <div class="col-xs-2 col-md-1 grey-color align-right margin-top-xs margin-bottom-xs">
+                    <span class="glyphicon" ng-class="statusIcon[task.status]"></span>
+                    {{$index + 1}}
+                </div>
+
+                <!-- task content -->
+                <div class="col-xs-6 col-md-8 margin-top-xs margin-bottom-xs">
+                    <label>{{task.content}}</label>
+                </div>
+                
+            </div> <!-- end of table body -->
+            
+        </div> <!-- end of main content -->
+            
+        <!----------------------------- footer ---------------------------->          
+        <hr>
+        <footer>
+            <p class="center">&copy; 2016 Benny Xu</p>
+        </footer>
+        
+    </body>
+</html>

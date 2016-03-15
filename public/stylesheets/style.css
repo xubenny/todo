@@ -1,8 +1,120 @@
+
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background-image: url("../images/background.jpg");
+    background-size: cover;
+    width: 100%;
+}
+li {
+    list-style-type: none;
 }
 
-a {
-  color: #00B7FF;
+/* common style */
+.center {
+    text-align: center;
 }
+.right {
+    text-align: right;
+}
+.margin-top-sm {
+    margin-top: 20px;
+}
+.margin-left-sm {
+    border: 1px grey solid;
+    padding: 20px 50px;
+}
+.margin-top-md {
+    margin-top: 100px;
+}
+.margin-bottom-md {
+    margin-bottom: 50px;
+}
+.margin-top-xs {
+    margin-top: 5px;
+}
+.margin-bottom-xs {
+    margin-bottom: 5px;
+}
+.grey-color {
+    color: #8B8989;
+}
+.red-color {
+    color: red;
+}
+
+.green-color {
+    color: green;
+}
+
+.align-right {
+    text-align: right;
+}
+
+
+
+/* task table */
+#tableHead {
+    text-align: center; 
+    font-size: 1.8em;
+    color: #696969;
+    margin-top: 30px;
+}
+.tableRow {
+    text-align: center; 
+    font-size: 1.8em;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 5px 0 5px 0;
+    color: #002451;
+
+    border:1px solid #dd;
+    box-shadow: 0 5px 5px 3px rgba(0, 0, 0, 0.2);
+    transition: all 200ms ease-out;
+}
+.tableRow:hover {
+    box-shadow: 0 0 30px rgba(0, 0, 255, 1);
+}
+
+.ongoing {
+    background-color: #d9edf7;
+}
+.finished {
+    color: #CDC9C9;
+    background-color: #dff0d8;
+}
+.deleted {
+    color: #CDC9C9;
+    background-color: #f2dede;
+}
+
+/* animation */
+.animate-list.ng-enter {
+    position: relative;
+    opacity: 0.0;
+    height: 0;
+/*    left: 100px;*/
+}
+
+.animate-list.ng-enter.ng-enter-active {
+    transition: all 0.5s ease;
+    opacity: 1.0;
+/*    left: 0;*/
+    height: 50px;
+}
+
+
+.animate-list.ng-leave {
+    position: relative;
+    opacity: 1.0;
+/*    left: 0;*/
+    height: 50px;
+    z-index: -100;
+}
+
+.animate-list.ng-leave.ng-leave-active {
+    transition: all 0.5s ease;
+    opacity: 0.0;
+/*    left: 100px;*/
+    height: 0;
+    top: -20px;
+}
+
