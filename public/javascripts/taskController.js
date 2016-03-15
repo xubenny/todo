@@ -10,6 +10,7 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
         deleted: "glyphicon-trash"
     };
     
+    //------------------------ initial varibles --------------------------------
     // task list after filter
     $scope.tasks = [
         {content: "[demo] Pay monthly credit card",
@@ -28,4 +29,22 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
 
     // fill background full of window size
     $("#mainContainer").css("min-height", $(window).height());
+    
+    //------------------------- define function -----------------------------
+    // update the status
+    $scope.onCheck = function(task) {
+        switch(task.status) {
+            case "ongoing":
+                task.status = "finished";
+                break;
+            case "finished":
+                task.status = "ongoing";
+                break;
+            case "deleted":
+                task.status = "finished";
+                break;
+        }
+    }
+    
+
 }]);

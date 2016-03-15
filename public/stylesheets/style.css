@@ -118,3 +118,24 @@ li {
     top: -20px;
 }
 
+
+/* task action button */
+.btn-check, .btn-edit, .btn-remove {
+    background: none;
+    border: none;
+}
+.btn-check:hover {
+    color: #2E8B57;
+    background: white;
+    box-shadow: 0 0 20px #2E8B57;
+}
+.btn-edit:hover {
+    color: #4169E1;
+    background: white;
+    box-shadow: 0 0 20px #4169E1;
+}
+.btn-remove:hover {
+    color: #FF4500;
+    background: white;
+    box-shadow: 0 0 20px #FF4500;
+}

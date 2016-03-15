@@ -70,6 +70,19 @@
                     <label>{{task.content}}</label>
                 </div>
                 
+                <!-- action buttons -->
+                <div class="col-xs-4 col-md-3" ng-show="activeItem==$index">
+                    <button type="button" class="btn btn-default btn-lg btn-check" ng-click="onCheck(task)">
+                        <span class="glyphicon glyphicon-check"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-lg btn-edit">
+                        <span class="glyphicon glyphicon-edit"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-lg btn-remove">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                </div>
+
             </div> <!-- end of table body -->
             
         </div> <!-- end of main content -->
