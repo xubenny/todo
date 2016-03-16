@@ -46,6 +46,7 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
     // when "Done" button on right of new task input bar is pressed
     // new task insert in the front
     $scope.onAddDone = function() {
+        // unshift is an js array method to add new items to the beginning
         $scope.tasks.unshift({
             content: $scope.content,
             status: "ongoing"}); 
