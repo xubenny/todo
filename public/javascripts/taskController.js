@@ -46,7 +46,7 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
     // when "Done" button on right of new task input bar is pressed
     // new task insert in the front
     $scope.onAddDone = function() {
-        $scope.tasks.splice(0, 0, {
+        $scope.tasks.unshift({
             content: $scope.content,
             status: "ongoing"}); 
 
@@ -84,6 +84,14 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
         }
     }
     
+    // remove all task marked with "deleted"
+    $scope.onClearTrash = function() {
+        // filter is a javascipt array method to create an subset array
+        $scope.tasks = $scope.tasks.filter(function(task) {
+            return task.status !== "deleted";
+        });
+    }
+
     // when "Edit" icon in task item is pressed
     $scope.onEdit = function(index) {
         $scope.editItem = index;

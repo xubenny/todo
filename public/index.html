@@ -62,7 +62,7 @@
                     </div>
 
                     <!-- search input -->
-                    <div class="input-group has-feedback col-sm-offset-1" ng-init="keyword=''">
+                    <div class="input-group has-feedback hidden-xs col-sm-offset-1" ng-init="keyword=''">
                         
                         <!-- search icon -->
                         <span class="input-group-addon">
@@ -93,6 +93,17 @@
                             <option value="deleted">Deleted</option>
                         </select>
                         
+                    </div>
+
+                    <!-- clear trash button -->
+                    <div class="form-group hidden-xs col-md-offset-1">
+                        <button type="button" class="btn btn-primary" ng-show="filter=='deleted'" ng-disabled="filteredTasks.length===0" ng-click="onClearTrash()">
+                            
+                            <!-- fire icon -->
+                            <span class="glyphicon glyphicon-fire"></span>
+                            Clear Trash
+                            
+                        </button>
                     </div>
 
                 </form>
@@ -131,7 +142,7 @@
             <hr>
             
             <!-- Table body, repeat rows by using ng-repeat -->
-            <div class="row tableRow animate-list {{task.status}}" ng-repeat="task in tasks | filter: {content: keyword, status: filter}" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
+            <div class="row tableRow animate-list {{task.status}}" ng-repeat="task in filteredTasks = (tasks | filter: {content: keyword, status: filter})" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
 
                 <!-- form is for connecting input area and edit done button -->
                 <form role="form">                    
@@ -168,8 +179,8 @@
                         </button>
 
                         <!-- delete button -->
-                        <button type="button" class="btn btn-default btn-lg btn-remove">
-                            <span class="glyphicon glyphicon-remove" ng-click="onRemove(task)"></span>
+                        <button type="button" class="btn btn-default btn-lg btn-remove" ng-click="onRemove(task)">
+                            <span class="glyphicon glyphicon-remove"></span>
                         </button>
 
                     </div>
@@ -184,8 +195,8 @@
             </div> <!-- end of table body -->
             
             <!-- A big reminder, only show when there is no any task -->
-            <div class="reminder animate-show" ng-show="tasks.length==0">
-                <h2>There is no any task!</h2>
+            <div class="reminder animate-show" ng-show="filteredTasks.length==0">
+                <h2>There is no any {{ filter | uppercase }} task!</h2>
             </div>
             
         </div> <!-- end of main content -->
