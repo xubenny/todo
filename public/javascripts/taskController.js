@@ -31,6 +31,33 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
     $("#mainContainer").css("min-height", $(window).height());
     
     //------------------------- define function -----------------------------
+
+    // when "Add New Task" button is pressed
+    $scope.onAddTask = function() {
+
+        // display input bar
+        $scope.inputTask = true;
+        // deley a little to wait for the animation start, otherwise fail to focus
+        setTimeout(function() {
+            $('#inputTask').focus();
+        }, 10);
+    }
+    
+    // when "Done" button on right of new task input bar is pressed
+    // new task insert in the front
+    $scope.onAddDone = function() {
+        $scope.tasks.splice(0, 0, {
+            content: $scope.content,
+            status: "ongoing"}); 
+
+        // switch to filter "ongoing" so that the new task can be shown up
+        if($scope.filter !== '' && $scope.filter !== 'ongoing') {
+            $scope.filter = "ongoing";
+        }
+        $scope.content = "";
+        $('#inputTask').focus();
+    }
+
     // update the status
     $scope.onCheck = function(task) {
         switch(task.status) {
