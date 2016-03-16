@@ -69,6 +69,24 @@
                         
                     </div> <!-- end of search input -->
 
+                    <!-- filter status select -->
+                    <div class="input-group hidden-xs col-sm-offset-1">
+                        
+                        <!-- filter icon -->
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-filter"></span>
+                        </span>
+                        
+                        <!-- status selection -->
+                        <select type="select" class="form-control" ng-model="filter">
+                            <option value="">All</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="finished">Finished</option>
+                            <option value="deleted">Deleted</option>
+                        </select>
+                        
+                    </div>
+
                 </form>
             </div> <!-- end of action row -->
             
@@ -81,7 +99,7 @@
             <hr>
             
             <!-- Table body, repeat rows by using ng-repeat -->
-            <div class="row tableRow animate-list {{task.status}}" ng-repeat="task in tasks | filter: {content: keyword}" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
+            <div class="row tableRow animate-list {{task.status}}" ng-repeat="task in tasks | filter: {content: keyword, status: filter}" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
 
                 <!-- form is for connecting input area and edit done button -->
                 <form role="form">                    
