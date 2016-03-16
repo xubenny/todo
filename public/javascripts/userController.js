@@ -1,14 +1,14 @@
 todoApp.controller('userController', ['$scope', '$http', function($scope, $http) {
     
     $scope.logined = false;
-    $scope.username = "";
+    $scope.email = "";
     
     
-    $scope.onSignin = function(name, pw) {
+    $scope.onSignin = function(email, pw) {
         
-        console.log("onSignin", name, pw);
+        console.log("onSignin", email, pw);
         
-        $http.post('/users/login', {username: name, password: pw}).then(
+        $http.post('/users/login', {email: email, password: pw}).then(
             
             // successCallback
             function (res) {
@@ -17,7 +17,7 @@ todoApp.controller('userController', ['$scope', '$http', function($scope, $http)
                 $scope.logined = true;
                 
                 // restore user data
-                $scope.username = res.data.username;
+                $scope.email = res.data.email;
                 $("#signin").modal('hide');
                 
             },

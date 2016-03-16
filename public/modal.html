@@ -12,12 +12,12 @@
       </div>
       <div class="modal-body">
           <!-- form id is for display error message in controller -->
-          <form id="signinForm" role="form" ng-submit="onSignin(name, pw)" ng-init="name='xbl@mail.com';pw='123'">
+          <form id="signinForm" role="form" ng-submit="onSignin(email, pw)" ng-init="email='xbl@mail.com';pw='123'">
               
               <!-- Email address -->
               <div class="form-group">
                   <label>Email address</label>
-                  <input type="email" class="form-control" ng-model="name" required autofocus>
+                  <input type="email" class="form-control" ng-model="email" required autofocus>
               </div>
               
               <!-- Password -->
