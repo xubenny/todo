@@ -57,5 +57,25 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
         }
     }
     
+    // when "Edit" icon in task item is pressed
+    $scope.onEdit = function(index) {
+        $scope.editItem = index;
+        // deley a little to wait for the animation start, otherwise fail to focus
+        setTimeout(function() {
+            // assume that only one item is being edited
+            $('.editItem:visible').eq(0).focus();
+        }, 10);
+    }
+    
+    // when "Done" button in task item is pressed
+    // model will automatic sync with resultTasks, so tasks, bacause they share same objects
+    $scope.onEditDone = function(task) {
+        if (task.content == '')
+            return;
+        
+        $scope.editItem = -1;
+    }
+    
+
 
 }]);

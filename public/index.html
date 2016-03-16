@@ -59,29 +59,54 @@
             
             <!-- Table body, repeat rows by using ng-repeat -->
             <div class="row tableRow animate-list {{task.status}}" ng-repeat="task in tasks" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
-                 <!-- task number -->
-                <div class="col-xs-2 col-md-1 grey-color align-right margin-top-xs margin-bottom-xs">
-                    <span class="glyphicon" ng-class="statusIcon[task.status]"></span>
-                    {{$index + 1}}
-                </div>
 
-                <!-- task content -->
-                <div class="col-xs-6 col-md-8 margin-top-xs margin-bottom-xs">
-                    <label>{{task.content}}</label>
-                </div>
-                
-                <!-- action buttons -->
-                <div class="col-xs-4 col-md-3" ng-show="activeItem==$index">
-                    <button type="button" class="btn btn-default btn-lg btn-check" ng-click="onCheck(task)">
-                        <span class="glyphicon glyphicon-check"></span>
-                    </button>
-                    <button type="button" class="btn btn-default btn-lg btn-edit">
-                        <span class="glyphicon glyphicon-edit"></span>
-                    </button>
-                    <button type="button" class="btn btn-default btn-lg btn-remove">
-                        <span class="glyphicon glyphicon-remove" ng-click="onRemove(task)"></span>
-                    </button>
-                </div>
+                <!-- form is for connecting input area and edit done button -->
+                <form role="form">                    
+
+                     <!-- task number -->
+                    <div class="col-xs-2 col-md-1 grey-color align-right margin-top-xs margin-bottom-xs">
+                        <span class="glyphicon" ng-class="statusIcon[task.status]"></span>
+                        {{$index + 1}}
+                    </div>
+
+                    <!-- task content -->
+                    <div class="form-group col-xs-6 col-md-8 margin-top-xs margin-bottom-xs">
+
+                        <!--show static text in normal-->
+                        <label ng-hide="editItem==$index">{{task.content}}</label>
+
+                        <!--switch to edit mode-->
+                        <!-- editItem class is for controller focus -->
+                        <input type="text form-control" class="editItem" placeholder="please type something" ng-model="task.content" style="width: 100%;" ng-show="editItem==$index">
+
+                    </div>
+
+                    <!-- action buttons -->
+                    <div class="col-xs-4 col-md-3" ng-show="activeItem==$index && editItem!==$index">
+
+                        <!-- check button -->
+                        <button type="button" class="btn btn-default btn-lg btn-check" ng-click="onCheck(task)">
+                            <span class="glyphicon glyphicon-check"></span>
+                        </button>
+
+                        <!-- edit button -->
+                        <button type="button" class="btn btn-default btn-lg btn-edit" ng-disabled="task.status!='ongoing'" ng-click="onEdit($index)">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+
+                        <!-- delete button -->
+                        <button type="button" class="btn btn-default btn-lg btn-remove">
+                            <span class="glyphicon glyphicon-remove" ng-click="onRemove(task)"></span>
+                        </button>
+
+                    </div>
+
+                    <!--edit done button-->
+                    <div class="col-xs-4 col-md-3" ng-show="editItem===$index">
+                        <button type="submit" class="btn btn-primary" ng-click="onEditDone(task)">Done</button>
+                    </div>
+                    
+                </form>
 
             </div> <!-- end of table body -->
             
