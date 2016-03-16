@@ -76,6 +76,23 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
         $scope.editItem = -1;
     }
     
+    // clear content if right side of search input box is clicked 
+    $scope.onClearSearch = function(e) {
+        if(e.currentTarget.clientWidth - e.offsetX < 30) {
+            $scope.keyword = '';
+        }
+    }
+    
+    // show pointer cursor when mouse move to right side of search input box
+    $scope.onSearchHover = function(e) {
+        if($scope.keyword !== "" && e.currentTarget.clientWidth - e.offsetX < 30) {
+            $("#keyword").css("cursor", "pointer");
+        }
+        else {
+            $("#keyword").css("cursor", "auto");
+        }
+    }
+    
 
 
 }]);

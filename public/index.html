@@ -49,6 +49,29 @@
             <h1 class="center margin-top-md margin-bottom-md"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;To Do List</h1>
             
             
+            <!-- The action row, including add, search, filter, and clear trash -->
+            <div class="row">
+                <form class="form-inline">
+                    
+                    <!-- search input -->
+                    <div class="input-group has-feedback col-sm-offset-1" ng-init="keyword=''">
+                        
+                        <!-- search icon -->
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </span>
+                        
+                        <!-- input search keyword -->
+                        <input type="text" class="form-control" placeholder="Search" id="keyword" ng-model="keyword" ng-click="onClearSearch($event)" ng-mousemove="onSearchHover($event)">
+                        
+                        <!-- clear icon -->
+                        <span class="form-control-feedback glyphicon glyphicon-remove" ng-show="keyword!=''"></span>
+                        
+                    </div> <!-- end of search input -->
+
+                </form>
+            </div> <!-- end of action row -->
+            
             <!-- Table header -->
             <div class="row" id="tableHead">
                 <div class="col-xs-2 col-md-1">#</div>
@@ -58,7 +81,7 @@
             <hr>
             
             <!-- Table body, repeat rows by using ng-repeat -->
-            <div class="row tableRow animate-list {{task.status}}" ng-repeat="task in tasks" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
+            <div class="row tableRow animate-list {{task.status}}" ng-repeat="task in tasks | filter: {content: keyword}" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
 
                 <!-- form is for connecting input area and edit done button -->
                 <form role="form">                    
