@@ -2,13 +2,16 @@
 
 todoApp.controller('userController', ['$scope', '$http', 'user', function($scope, $http, user) {
     
-    // it doesn't work
-    // Every time a modal is shown, if it has an autofocus element, focus on it.
-    $('.modal').on('shown.bs.modal', function() {
-        console.log("autofocus");
-        $(this).find('[autofocus]').focus();
-    });
-    
+
+    // if seperate the focus callback and show function, the focus will not work
+    $scope.showModal = function(id) {
+
+        // Every time a modal is shown, if it has an autofocus element, focus on it.
+        $(id).on('shown.bs.modal', function () { 
+            $(this).find('[autofocus]').focus();
+        })
+        .modal('show');
+    }
     
     $scope.onSignin = function(email, pw) {
         
