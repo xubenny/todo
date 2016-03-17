@@ -2,7 +2,7 @@
 
 var todoApp = angular.module("todoApp", ['ngAnimate']);
 
-todoApp.controller("taskController", ["$scope", "$animate", function($scope, $animate) {
+todoApp.controller("taskController", ["$scope", "$animate", "$http", "user", function($scope, $animate, $http, user) {
     
     // constant
     $scope.statusIcon = {
@@ -35,6 +35,12 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
     // when "Add New Task" button is pressed
     $scope.onAddTask = function() {
 
+        // can add task only after logined
+        if(!user.logined) {
+            $('#signin').modal();
+            return;
+        }
+        
         // display input bar
         $scope.inputTask = true;
         // deley a little to wait for the animation start, otherwise fail to focus
@@ -46,10 +52,18 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
     // when "Done" button on right of new task input bar is pressed
     // new task insert in the front
     $scope.onAddDone = function() {
+        var task = {content: $scope.content,
+                status: "ongoing",
+               time: Date.now()};
+        console.log("onAddDone", task);
+        
+        // upload to server
+        if(user.logined) {
+            $http.post('/users/addtask', task);
+        }
+        
         // unshift is an js array method to add new items to the beginning
-        $scope.tasks.unshift({
-            content: $scope.content,
-            status: "ongoing"}); 
+        $scope.tasks.unshift(task); 
 
         // switch to filter "ongoing" so that the new task can be shown up
         if($scope.filter !== '' && $scope.filter !== 'ongoing') {

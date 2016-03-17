@@ -1,6 +1,6 @@
-todoApp.controller('userController', ['$scope', '$http', function($scope, $http) {
+todoApp.controller('userController', ['$scope', '$http', 'user', function($scope, $http, user) {
     
-    $scope.logined = false;
+    // for nav bar display user account
     $scope.email = "";
 
     // Every time a modal is shown, if it has an autofocus element, focus on it.
@@ -8,28 +8,42 @@ todoApp.controller('userController', ['$scope', '$http', function($scope, $http)
         $(this).find('[autofocus]').focus();
     });
     
+    // get user logined status
+    $http.get('/users/getstatus').then(
+
+        // success callback
+        function (res) {
+            user.logined = true;
+            $scope.email = res.data;
+            console.log('get/users/getstatus', res.data);
+        },
+        // fail callback
+        function (res) {
+            user.logined = false;
+        }
+    );
+    
     $scope.onSignin = function(email, pw) {
         
         console.log("onSignin", email, pw);
         
         $http.post('/users/login', {email: email, password: pw}).then(
             
-            // successCallback
+            // success callback
             function (res) {
                 
-                console.log("post/users/login success", res.data);
-                $scope.logined = true;
+                console.log("post/users/login success");
+                user.logined = true;
                 
                 // restore user data
-                $scope.email = res.data.email;
                 $("#signin").modal('hide');
                 
             },
-            // fail call back
+            // fail callback
             function (res) {
                 
                 console.log("post/users/login fail", res.data, res.status);
-                $scope.logined = false;
+                user.logined = false;
                 
                 var errMsg = res.data;
                 if(res.status === 401) {

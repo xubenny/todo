@@ -12,6 +12,12 @@ var users = mongoose.model('users', {
     email: String,
     password: String
 });
+var tasks = mongoose.model('tasks', {
+    email: String,
+    content: String,
+    status: String,
+    time: Number
+});
 
 //-------------------- passport ------------------
 router.use(expressSession({ 
@@ -59,8 +65,36 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
     // req.isAuthenticated() is not needed, passport will return '401' error (Unauthorized) if fail
     console.log('post/users/login success', req.body);
     
-    res.json(req.user);
+    res.json(true);
     console.log("success", req.user);
+})
+
+router.post('/addtask', function(req, res) {
+    
+    if(!req.isAuthenticated()) {
+        res.status(401).send("Unauthorized");
+        return;
+    }
+    
+    var task = req.body;
+    task.email = req.user.email;
+
+    console.log("post/users/addtask", task);
+    
+    // use mongoose method insert a doc to DB
+    tasks(task).save();
+    
+    res.json(true);
+})
+
+router.get('/getstatus', function(req, res) {
+    
+     if(!req.isAuthenticated()) {
+        res.status(401).send("Unauthorized");
+        return;
+    }
+    
+    res.json(req.user.email);
 })
 
 module.exports = router;
