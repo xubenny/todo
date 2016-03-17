@@ -1,7 +1,7 @@
 todoApp.controller('userController', ['$scope', '$http', 'user', function($scope, $http, user) {
     
     // for nav bar display user account
-    $scope.email = "";
+    $scope.email = "xbl@mail.com";
 
     // Every time a modal is shown, if it has an autofocus element, focus on it.
     $('.modal').on('shown.bs.modal', function() {
@@ -57,6 +57,10 @@ todoApp.controller('userController', ['$scope', '$http', 'user', function($scope
                 $('#signin').find('[autofocus]').focus();
             }
         );    
+    }
+    
+    $scope.isLogined = function() {
+        return user.logined;
     }
     
 }]);

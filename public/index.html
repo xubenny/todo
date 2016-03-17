@@ -24,6 +24,8 @@
     
     <body>
 
+        <div ng-controller="userController">
+    
         <!------------------- Navigation bar and menu ------------------------>
         <nav class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
@@ -37,15 +39,30 @@
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#signin" data-toggle="modal">Sign in</a></li>
-                        <li><a href="#" data-toggle="modal" data-target="#signup">Join</a></li>
+                        
+                        <li ng-show="!isLogined()"><a href="#signin" data-toggle="modal">Sign in</a></li>
+                        <li ng-show="!isLogined()"><a href="#signup" data-toggle="modal">Join</a></li>
+                        <li ng-show="isLogined()" class="dropdown">
+                            
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{email}} <span class="caret"></span></a>
+                            
+                              <ul class="dropdown-menu">
+                                <li><a href="#" data-toggle="modal">Change Password</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Log out</a></li>
+                              </ul>
+                            
+                        </li>
+                        
                     </ul>
                 </div>
             </div>
         </nav>
         
+        <!------------------------------ modal ------------------------------->
         <div ng-include="'modal.html'"></div>
 
+        </div>
         
         <!-------------------------- main content --------------------------->
         <div class="container" id="mainContainer" ng-controller="taskController">
