@@ -89,12 +89,24 @@ router.post('/addtask', function(req, res) {
 
 router.get('/getstatus', function(req, res) {
     
-     if(!req.isAuthenticated()) {
+    if(!req.isAuthenticated()) {
         res.status(401).send("Unauthorized");
         return;
     }
     
     res.json(req.user.email);
+})
+
+router.get('/logout', function(req, res) {
+
+    if(!req.isAuthenticated()) {
+        res.status(401).send("Unauthorized");
+        return;
+    }
+
+    console.log("get/logout");
+    req.logout();
+    res.json(true);
 })
 
 module.exports = router;

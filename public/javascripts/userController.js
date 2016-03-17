@@ -63,4 +63,27 @@ todoApp.controller('userController', ['$scope', '$http', 'user', function($scope
         return user.logined;
     }
     
+    $scope.logout = function() {
+        
+        $http.get('/users/logout').then(
+
+            // success callback
+            function(res) {
+                console.log("get/users/logout success");
+                user.logined = false;
+
+                $scope.keyword = "";
+                $scope.filter = "";
+            });    
+    }
+    
 }]);
+
+
+
+
+
+
+
+
+
