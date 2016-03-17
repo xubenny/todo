@@ -65,7 +65,7 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
     // req.isAuthenticated() is not needed, passport will return '401' error (Unauthorized) if fail
     console.log('post/users/login success', req.body);
     
-    res.json(true);
+    res.json(req.user.email);
     console.log("success", req.user);
 })
 

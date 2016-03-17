@@ -2,9 +2,10 @@
 
 todoApp.controller('userController', ['$scope', '$http', 'user', function($scope, $http, user) {
     
-    
+    // it doesn't work
     // Every time a modal is shown, if it has an autofocus element, focus on it.
     $('.modal').on('shown.bs.modal', function() {
+        console.log("autofocus");
         $(this).find('[autofocus]').focus();
     });
     
@@ -20,6 +21,7 @@ todoApp.controller('userController', ['$scope', '$http', 'user', function($scope
                 
                 console.log("post/users/login success");
                 user.logined = true;
+                user.email = res.data;
                 
                 // restore user data
                 $("#signin").modal('hide');

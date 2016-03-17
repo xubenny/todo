@@ -90,6 +90,8 @@ todoApp.controller("taskController", ["$scope", "$animate", "$http", "user", fun
         $scope.tasks = $scope.tasks.filter(function(task) {
             return task.status !== "deleted";
         });
+        // should keep user service and controller share the same address
+        user.tasks = $scope.tasks;
     }
 
     // when "Edit" icon in task item is pressed
