@@ -164,7 +164,7 @@
             <hr>
             
             <!-- Table body, repeat rows by using ng-repeat -->
-            <div class="row tableRow animate-list {{task.status}}" ng-repeat="task in filteredTasks = (tasks | filter: {content: keyword, status: filter})" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
+            <div class="row tableRow animate-list {{task.status}}" ng-repeat="task in filteredTasks = (tasks | filter: {content: keyword, status: filter} | orderBy: '-time')" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
 
                 <!-- form is for connecting input area and edit done button -->
                 <form role="form">                    

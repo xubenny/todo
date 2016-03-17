@@ -123,4 +123,23 @@ router.get('/gettasks', function(req, res) {
 
 })
 
+router.post('/signup', function(req, res) {
+    
+    var user = req.body;
+    console.log("post/signup", user);
+    
+    users.findOne({email: user.email}, function(err, doc) {
+        if(doc) {
+            console.log("signup error: user already exist", doc);
+            res.status(500).send("user already exist");
+        }
+        else {
+            console.log("signup success");
+            
+            users(user).save();
+            res.json(true);
+        }    
+    });
+})
+
 module.exports = router;
