@@ -1,27 +1,13 @@
+"use strict";
+
 todoApp.controller('userController', ['$scope', '$http', 'user', function($scope, $http, user) {
     
-    // for nav bar display user account
-    $scope.email = "xbl@mail.com";
-
+    
     // Every time a modal is shown, if it has an autofocus element, focus on it.
     $('.modal').on('shown.bs.modal', function() {
         $(this).find('[autofocus]').focus();
     });
     
-    // get user logined status
-    $http.get('/users/getstatus').then(
-
-        // success callback
-        function (res) {
-            user.logined = true;
-            $scope.email = res.data;
-            console.log('get/users/getstatus', res.data);
-        },
-        // fail callback
-        function (res) {
-            user.logined = false;
-        }
-    );
     
     $scope.onSignin = function(email, pw) {
         
@@ -37,6 +23,8 @@ todoApp.controller('userController', ['$scope', '$http', 'user', function($scope
                 
                 // restore user data
                 $("#signin").modal('hide');
+                
+                user.getTasks();
                 
             },
             // fail callback
@@ -59,22 +47,18 @@ todoApp.controller('userController', ['$scope', '$http', 'user', function($scope
         );    
     }
     
+    // for nav bar display user login status
     $scope.isLogined = function() {
         return user.logined;
     }
     
+    // for nav bar display user account
+    $scope.account = function() {
+        return user.email;
+    }
+    
     $scope.logout = function() {
-        
-        $http.get('/users/logout').then(
-
-            // success callback
-            function(res) {
-                console.log("get/users/logout success");
-                user.logined = false;
-
-                $scope.keyword = "";
-                $scope.filter = "";
-            });    
+        user.logout();
     }
     
 }]);

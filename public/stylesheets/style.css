@@ -7,6 +7,10 @@ body {
 li {
     list-style-type: none;
 }
+#mainContainer {
+    height: 100vh;
+    min-height: 800px;
+}
 
 /* common style */
 .center {

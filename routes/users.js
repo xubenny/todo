@@ -104,9 +104,23 @@ router.get('/logout', function(req, res) {
         return;
     }
 
-    console.log("get/logout");
+    console.log("get/users/logout");
     req.logout();
     res.json(true);
+})
+
+router.get('/gettasks', function(req, res) {
+    
+    if(!req.isAuthenticated()) {
+        res.status(401).send("Unauthorized");
+        return;
+    }
+    
+    console.log('get/users/gettasks');
+    tasks.find({email: req.user.email}, {_id:0, content:1, status:1, time:1}, function(err, tasklist) {
+        res.json(tasklist);
+    })
+
 })
 
 module.exports = router;

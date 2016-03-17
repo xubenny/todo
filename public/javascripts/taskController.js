@@ -11,24 +11,9 @@ todoApp.controller("taskController", ["$scope", "$animate", "$http", "user", fun
     };
     
     //------------------------ initial varibles --------------------------------
-    // task list after filter
-    $scope.tasks = [
-        {content: "[demo] Pay monthly credit card",
-        status: "ongoing"},
-        {content: "[demo] Clean house",
-        status: "finished"},
-        {content: "[demo] Return books to library",
-        status: "deleted"},
-        {content: "[demo] Ask David about the book study material",
-        status: "ongoing"},
-        {content: "[demo] Pick up Roger from Suzanne middle school",
-        status: "ongoing"},
-        {content: "[demo] Prepare donation check for church",
-        status: "finished"}
-        ];
-
-    // fill background full of window size
-    $("#mainContainer").css("min-height", $(window).height());
+    
+    // share tasks address with user service so that other controller can access
+    $scope.tasks = user.tasks;    
     
     //------------------------- define function -----------------------------
 
