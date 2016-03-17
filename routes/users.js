@@ -6,6 +6,8 @@ var passport = require('passport');
 var passportLocal = require('passport-local');
 var expressSession = require('express-session');
 
+var bcrypt = require('bcrypt');
+
 //-------------------- mongoDB -------------------
 mongoose.connect('mongodb://localhost/todo');
 var users = mongoose.model('users', {
@@ -34,11 +36,20 @@ passport.use(new passportLocal.Strategy({
     },
     function(email, password, done) {
 
-        users.findOne({email: email, password: password}, {_id:0, email:1}, function(err, user) {
-            // if success, db will give an object {_id:..., email:..., password:...}
-            // if fail, db will give a 'null'
+        users.findOne({email: email}, function(err, user) {
             console.log("passportLocal.Strategy", user);
-            done(null, user);
+            
+            // email doesn't exist
+            if(!user) {
+                done(null, null);
+            }
+            // passowrd not correct
+            else if(!bcrypt.compareSync(password, user.password)) {
+                don(null, null);
+            }
+            else {
+                done(null, {email: user.email});
+            }
         });
     })
 );
@@ -135,6 +146,11 @@ router.post('/signup', function(req, res) {
         }
         else {
             console.log("signup success");
+            
+            var salt = bcrypt.genSaltSync(10);
+            var hash = bcrypt.hashSync(user.password, salt);
+            
+            user.password = hash;
             
             users(user).save();
             res.json(true);
