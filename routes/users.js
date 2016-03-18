@@ -181,8 +181,8 @@ router.post('/signup', function(req, res) {
                 subject: 'Confirm your email address on EaseNote', // Subject line
                 html: "<style>body {font-family:Arial, sans-serif;text-align: center;color: #3d3535;} #out-rect {border: lightgray 1px solid;border-radius: 3px; width: 60%; display: inline-block; padding: 20px; color: gray; margin:auto;} #verify-btn {background: #1cb78c;color: white;border-radius: 3px; width: 50%; min-width: 200px; height: 3em; display: inline-block; line-height: 3em;} #verify-btn a {display:inline-block;width: 100%;color: white;text-decoration:none;}</style> <h1>Welcome to EaseNote!</h1> <div id='out-rect'><p>Congratulations on reaching EaseNote, a useful website to help you manage your tasks. Your account is "
                 + user.email
-                + ". Please click on the following link to verify your email address:</p> <div id='verify-btn'><a href='http://localhost:8080/users/verifyemail/"
-                + user.token
+                + ". Please click on the following link to verify your email address:</p> <div id='verify-btn'><a href='http://localhost:3000/users/verifyemail/"
+                + user.token.replace('/', '%2F')
                 + "'>VERIFY YOUR EMAIL</a></div></div>"
             };
     
@@ -203,6 +203,37 @@ var sendMail = function(options) {
         };
     });
 }
+
+
+router.get('/verifyemail/:hash', function(req, res) {
+    var hash = req.params.hash;
+    
+    console.log("verifyemail", hash);
+    users.findOne({token: hash}, function(err, user) {
+        console.log("verifyemail", user, hash);
+        
+        if(!user) {
+            console.log("verify email: no user found");
+            
+            res.render('feedback', {title: 'Invalid approach!',
+                                message: 'Please use the link that has been send to your email.'});
+        }
+        else if (user.active) {
+            console.log("verify email: already active");
+
+            res.render('feedback', {title: 'Already verified', message: "You had already verified your Email address. Please visit <a href='http://localhost:3000'>Easenote</a> and login."});
+        }
+        else {
+            console.log("verify email: success");
+            
+            user.active = true;
+            // update to mongoDB
+            user.save();
+            res.render('feedback', {title: "Congratulation!", message: "Your Easenote account has been activated, you can visit <a href='http://localhost:3000'>Easenote</a> and login now!"})
+        }
+    });
+    
+})
 
 
 module.exports = router;
