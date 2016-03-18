@@ -10,6 +10,7 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
         deleted: "glyphicon-trash"
     };
     
+    //------------------------ initial varibles --------------------------------
     // task list after filter
     $scope.tasks = [
         {content: "[demo] Pay monthly credit card",
@@ -28,4 +29,106 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
 
     // fill background full of window size
     $("#mainContainer").css("min-height", $(window).height());
+    
+    //------------------------- define function -----------------------------
+
+    // when "Add New Task" button is pressed
+    $scope.onAddTask = function() {
+
+        // display input bar
+        $scope.inputTask = true;
+        // deley a little to wait for the animation start, otherwise fail to focus
+        setTimeout(function() {
+            $('#inputTask').focus();
+        }, 10);
+    }
+    
+    // when "Done" button on right of new task input bar is pressed
+    // new task insert in the front
+    $scope.onAddDone = function() {
+        // unshift is an js array method to add new items to the beginning
+        $scope.tasks.unshift({
+            content: $scope.content,
+            status: "ongoing"}); 
+
+        // switch to filter "ongoing" so that the new task can be shown up
+        if($scope.filter !== '' && $scope.filter !== 'ongoing') {
+            $scope.filter = "ongoing";
+        }
+        $scope.content = "";
+        $('#inputTask').focus();
+    }
+
+    // update the status
+    $scope.onCheck = function(task) {
+        switch(task.status) {
+            case "ongoing":
+                task.status = "finished";
+                break;
+            case "finished":
+                task.status = "ongoing";
+                break;
+            case "deleted":
+                task.status = "finished";
+                break;
+        }
+    }
+
+    // permenent remove a deleted task, or temporary mark a normal task
+    $scope.onRemove = function(task) {
+        if(task.status === "deleted") {
+            var index = $scope.tasks.indexOf(task);
+            $scope.tasks.splice(index, 1);
+        }
+        else {
+            task.status = "deleted";
+        }
+    }
+    
+    // remove all task marked with "deleted"
+    $scope.onClearTrash = function() {
+        // filter is a javascipt array method to create an subset array
+        $scope.tasks = $scope.tasks.filter(function(task) {
+            return task.status !== "deleted";
+        });
+    }
+
+    // when "Edit" icon in task item is pressed
+    $scope.onEdit = function(index) {
+        $scope.editItem = index;
+        // deley a little to wait for the animation start, otherwise fail to focus
+        setTimeout(function() {
+            // assume that only one item is being edited
+            $('.editItem:visible').eq(0).focus();
+        }, 10);
+    }
+    
+    // when "Done" button in task item is pressed
+    // model will automatic sync with resultTasks, so tasks, bacause they share same objects
+    $scope.onEditDone = function(task) {
+        if (task.content == '')
+            return;
+        
+        $scope.editItem = -1;
+    }
+    
+    // clear content if right side of search input box is clicked 
+    $scope.onClearSearch = function(e) {
+        if(e.currentTarget.clientWidth - e.offsetX < 30) {
+            $scope.keyword = '';
+        }
+    }
+    
+    // show pointer cursor when mouse move to right side of search input box
+    $scope.onSearchHover = function(e) {
+        if($scope.keyword !== "" && e.currentTarget.clientWidth - e.offsetX < 30) {
+            $("#keyword").css("cursor", "pointer");
+        }
+        else {
+            $("#keyword").css("cursor", "auto");
+        }
+    }
+    
+
+
 }]);

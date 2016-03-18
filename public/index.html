@@ -49,6 +49,90 @@
             <h1 class="center margin-top-md margin-bottom-md"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;To Do List</h1>
             
             
+            <!-- The action row, including add, search, filter, and clear trash -->
+            <div class="row">
+                <form class="form-inline">
+                    
+                    <!-- add task button -->
+                    <div class="form-group col-xs-offset-1 col-sm-offset-0">
+                        <button type="button" class="btn btn-primary" ng-click="onAddTask()">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Add New Task
+                        </button>
+                    </div>
+
+                    <!-- search input -->
+                    <div class="input-group has-feedback hidden-xs col-sm-offset-1" ng-init="keyword=''">
+                        
+                        <!-- search icon -->
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </span>
+                        
+                        <!-- input search keyword -->
+                        <input type="text" class="form-control" placeholder="Search" id="keyword" ng-model="keyword" ng-click="onClearSearch($event)" ng-mousemove="onSearchHover($event)">
+                        
+                        <!-- clear icon -->
+                        <span class="form-control-feedback glyphicon glyphicon-remove" ng-show="keyword!=''"></span>
+                        
+                    </div> <!-- end of search input -->
+
+                    <!-- filter status select -->
+                    <div class="input-group hidden-xs col-sm-offset-1">
+                        
+                        <!-- filter icon -->
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-filter"></span>
+                        </span>
+                        
+                        <!-- status selection -->
+                        <select type="select" class="form-control" ng-model="filter" ng-init="filter=''">
+                            <option value="">All</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="finished">Finished</option>
+                            <option value="deleted">Deleted</option>
+                        </select>
+                        
+                    </div>
+
+                    <!-- clear trash button -->
+                    <div class="form-group hidden-xs col-md-offset-1">
+                        <button type="button" class="btn btn-primary" ng-show="filter=='deleted'" ng-disabled="filteredTasks.length===0" ng-click="onClearTrash()">
+                            
+                            <!-- fire icon -->
+                            <span class="glyphicon glyphicon-fire"></span>
+                            Clear Trash
+                            
+                        </button>
+                    </div>
+
+                </form>
+            </div> <!-- end of action row -->
+            
+            <!-- New task bar, only show when Add button is clicked -->
+            <div class="row margin-top-sm animate-show" ng-show="inputTask" ng-init="inputTask=false">
+                <form role="form">
+                    
+                    <!-- input area -->
+                    <div class="form-group col-xs-8 col-sm-10" >
+                        <input type="text" class="form-control" id="inputTask" placeholder="New task" ng-model="content">
+                    </div>
+                    
+                    <!-- add button -->
+                    <div class="form-group col-xs-2 col-sm-1">
+                        <button type="submit" class="btn btn-primary" ng-disabled="content===''" ng-click="onAddDone()" ng-init="content=''">&nbsp;&nbsp;Add&nbsp;&nbsp;
+                        </button>
+                    </div>
+                    
+                    <!-- close button -->
+                    <div class="form-group col-xs-2 col-sm-1">
+                        <button type="button" class="btn btn-default" ng-click="inputTask=false">Close
+                        </button>
+                    </div>
+                    
+                </form>
+            </div> <!-- end of New task bar -->
+            
             <!-- Table header -->
             <div class="row" id="tableHead">
                 <div class="col-xs-2 col-md-1">#</div>
@@ -58,19 +142,62 @@
             <hr>
             
             <!-- Table body, repeat rows by using ng-repeat -->
-            <div class="row tableRow {{task.status}}" ng-repeat="task in tasks" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
-                 <!-- task number -->
-                <div class="col-xs-2 col-md-1 grey-color align-right margin-top-xs margin-bottom-xs">
-                    <span class="glyphicon" ng-class="statusIcon[task.status]"></span>
-                    {{$index + 1}}
-                </div>
+            <div class="row tableRow animate-list {{task.status}}" ng-repeat="task in filteredTasks = (tasks | filter: {content: keyword, status: filter})" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
 
-                <!-- task content -->
-                <div class="col-xs-6 col-md-8 margin-top-xs margin-bottom-xs">
-                    <label>{{task.content}}</label>
-                </div>
-                
+                <!-- form is for connecting input area and edit done button -->
+                <form role="form">                    
+
+                     <!-- task number -->
+                    <div class="col-xs-2 col-md-1 grey-color align-right margin-top-xs margin-bottom-xs">
+                        <span class="glyphicon" ng-class="statusIcon[task.status]"></span>
+                        {{$index + 1}}
+                    </div>
+
+                    <!-- task content -->
+                    <div class="form-group col-xs-6 col-md-8 margin-top-xs margin-bottom-xs">
+
+                        <!--show static text in normal-->
+                        <label ng-hide="editItem==$index">{{task.content}}</label>
+
+                        <!--switch to edit mode-->
+                        <!-- editItem class is for controller focus -->
+                        <input type="text form-control" class="editItem" placeholder="please type something" ng-model="task.content" style="width: 100%;" ng-show="editItem==$index">
+
+                    </div>
+
+                    <!-- action buttons -->
+                    <div class="col-xs-4 col-md-3" ng-show="activeItem==$index && editItem!==$index">
+
+                        <!-- check button -->
+                        <button type="button" class="btn btn-default btn-lg btn-check" ng-click="onCheck(task)">
+                            <span class="glyphicon glyphicon-check"></span>
+                        </button>
+
+                        <!-- edit button -->
+                        <button type="button" class="btn btn-default btn-lg btn-edit" ng-disabled="task.status!='ongoing'" ng-click="onEdit($index)">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+
+                        <!-- delete button -->
+                        <button type="button" class="btn btn-default btn-lg btn-remove" ng-click="onRemove(task)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+
+                    </div>
+
+                    <!--edit done button-->
+                    <div class="col-xs-4 col-md-3" ng-show="editItem===$index">
+                        <button type="submit" class="btn btn-primary" ng-click="onEditDone(task)">Done</button>
+                    </div>
+                    
+                </form>
+
             </div> <!-- end of table body -->
+            
+            <!-- A big reminder, only show when there is no any task -->
+            <div class="reminder animate-show" ng-show="filteredTasks.length==0">
+                <h2>There is no any {{ filter | uppercase }} task!</h2>
+            </div>
             
         </div> <!-- end of main content -->
             
