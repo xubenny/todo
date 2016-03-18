@@ -107,6 +107,31 @@ todoApp.controller('userController', ['$scope', '$http', 'user', function($scope
             })
     }
     
+    $scope.sendResetMail = function(to) {
+        $("#forgotpw").modal('hide');
+        
+        $http.post('users/sendresetmail/', {email: to}).then(
+
+            // success call back
+            function(res) {
+                console.log("post/sendresetmail success");
+                
+                $scope.feedbackTitle = 'Email sent to ' + to;
+                $scope.feedbackContent = "To get back into your account, follow the instructions we've sent to your email address.";
+                $("#mailsent").modal('show');
+            },
+            
+            // fail call back
+            function(res) {
+                console.log("post/sendresetmail fail", res.data);
+                
+                $scope.feedbackTitle = 'Fail to send Email to ' + to;
+                $scope.feedbackContent = res.data.response;
+                $("#mailsent").modal('show');
+            }
+        );        
+    }
+    
     // for nav bar display user login status
     $scope.isLogined = function() {
         return user.logined;

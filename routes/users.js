@@ -12,9 +12,13 @@ var bcrypt = require('bcrypt');
 mongoose.connect('mongodb://localhost/todo');
 var users = mongoose.model('users', {
     email: String,
-    token: String,
     password: String,
-    active: Boolean
+
+    activeToken: String,
+    active: Boolean,
+    
+    resetToken: String,
+    resetExpire: Date
 });
 var tasks = mongoose.model('tasks', {
     email: String,
@@ -168,7 +172,7 @@ router.post('/signup', function(req, res) {
             // create a hash for email, for verify and reset password
             salt = bcrypt.genSaltSync(10);
             hash = bcrypt.hashSync(user.email, salt);
-            user.token = hash;
+            user.activeToken = hash;
             user.active = false;
             
             users(user).save();
@@ -182,7 +186,7 @@ router.post('/signup', function(req, res) {
                 html: "<style>body {font-family:Arial, sans-serif;text-align: center;color: #3d3535;} #out-rect {border: lightgray 1px solid;border-radius: 3px; width: 60%; display: inline-block; padding: 20px; color: gray; margin:auto;} #verify-btn {background: #1cb78c;color: white;border-radius: 3px; width: 50%; min-width: 200px; height: 3em; display: inline-block; line-height: 3em;} #verify-btn a {display:inline-block;width: 100%;color: white;text-decoration:none;}</style> <h1>Welcome to EaseNote!</h1> <div id='out-rect'><p>Congratulations on reaching EaseNote, a useful website to help you manage your tasks. Your account is "
                 + user.email
                 + ". Please click on the following link to verify your email address:</p> <div id='verify-btn'><a href='http://localhost:3000/users/verifyemail/"
-                + user.token.replace('/', '%2F')
+                + user.activeToken.replace('/', '%2F')
                 + "'>VERIFY YOUR EMAIL</a></div></div>"
             };
     
@@ -193,15 +197,20 @@ router.post('/signup', function(req, res) {
     });
 })
 
-var sendMail = function(options) {
+var sendMail = function(options, callback) {
         
     transporter.sendMail(options, function(error, info){
-        if(error){
+        if(error) {
             console.log('Send mail error', error);
-        }else{
+        }
+        else {
             console.log('Mail sent: ' + info.response);
-        };
-    });
+        }
+
+        if(callback) {
+            callback(error);
+        }
+    })
 }
 
 
@@ -209,7 +218,7 @@ router.get('/verifyemail/:hash', function(req, res) {
     var hash = req.params.hash;
     
     console.log("verifyemail", hash);
-    users.findOne({token: hash}, function(err, user) {
+    users.findOne({activeToken: hash}, function(err, user) {
         console.log("verifyemail", user, hash);
         
         if(!user) {
@@ -268,6 +277,52 @@ router.post('/changepw', function(req, res) {
     });
 })
 
+router.post('/sendresetmail', function(req, res) {
+    
+    var email = req.body.email;
+    console.log("post/sendresetmail", email);
+
+    users.findOne({email: email}, function(err, user) {
+        if(!user) {
+            console.log("email doesn't exist");
+            
+            res.status(500).send({ error: "email doesn't exist" });
+        }
+        else {
+            // create a hash for reset password
+            var salt = bcrypt.genSaltSync(10);
+            var hash = bcrypt.hashSync(user.email, salt);
+            user.resetToken = hash;
+            user.resetExpire = Date.now() + 7200000; // two hours
+            
+            user.save();
+            
+            var mailOptions = {
+                from: 'Easenote@gmail.com', // sender address
+//                to: email,
+                to: 'xubinglin@hotmail.com', // list of receivers
+                subject: 'Easenote Password Assistance', // Subject line
+                text: "To initiate the password reset process for your "
+                + email + 
+                " Easenote Account, click the link below:\n\n"
+                + "http://localhost:3000/resetpw/"
+                
+                // replace all '/' by '%2F', so that server can read the whole hash as one parameter
+                + user.resetToken.replace(/\//g, '%2F') + "\n\n"
+                + "Sincerely,\n"
+                + "Easenote"
+            };
+            sendMail(mailOptions, function(error) {
+                if (!error) {
+                    res.json(true);
+                }
+                else {
+                    res.status(500).send(error);
+                }
+            });
+        };
+    });
+})
 
 
 module.exports = router;
