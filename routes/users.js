@@ -305,7 +305,9 @@ router.post('/sendresetmail', function(req, res) {
                 text: "To initiate the password reset process for your "
                 + email + 
                 " Easenote Account, click the link below:\n\n"
-                + "http://localhost:3000/resetpw/"
+                
+                // in productive environment, email will display a hyperlink instead plain text
+                + "http://localhost:3000/users/resetpw/"
                 
                 // replace all '/' by '%2F', so that server can read the whole hash as one parameter
                 + user.resetToken.replace(/\//g, '%2F') + "\n\n"
@@ -321,6 +323,21 @@ router.post('/sendresetmail', function(req, res) {
                 }
             });
         };
+    });
+})
+
+router.get('/resetpw/:hash', function(req, res) {
+    console.log("post/resetpw", req.params.hash);
+
+    users.findOne({resetToken: req.params.hash, resetExpire: {$gt: Date.now()}}, function(err, user) {
+        if(!user) {
+            console.log("Invalid approach!");
+            
+            res.render('resetpw', {user: null});
+        }
+        else {
+            res.render('resetpw', {user: user});
+        }
     });
 })
 
