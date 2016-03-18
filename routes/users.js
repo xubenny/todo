@@ -12,13 +12,26 @@ var bcrypt = require('bcrypt');
 mongoose.connect('mongodb://localhost/todo');
 var users = mongoose.model('users', {
     email: String,
-    password: String
+    token: String,
+    password: String,
+    active: Boolean
 });
 var tasks = mongoose.model('tasks', {
     email: String,
     content: String,
     status: String,
     time: Number
+});
+
+//-------------------- nodemailer -------------------
+
+var nodemailer = require('nodemailer');
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'Easenote@gmail.com', // Your email id
+        pass: 'xYh-Avg-XB8-nz7' // Your password
+    }
 });
 
 //-------------------- passport ------------------
@@ -147,15 +160,49 @@ router.post('/signup', function(req, res) {
         else {
             console.log("signup success");
             
+            // convert plain text password into hash
             var salt = bcrypt.genSaltSync(10);
             var hash = bcrypt.hashSync(user.password, salt);
-            
             user.password = hash;
             
+            // create a hash for email, for verify and reset password
+            salt = bcrypt.genSaltSync(10);
+            hash = bcrypt.hashSync(user.email, salt);
+            user.token = hash;
+            user.active = false;
+            
             users(user).save();
+
+            // send a active mail to user
+            var mailOptions = {
+                from: 'Easenote@gmail.com', // sender address
+//                to: user.email,
+                to: 'xubinglin@hotmail.com', // list of receivers
+                subject: 'Confirm your email address on EaseNote', // Subject line
+                html: "<style>body {font-family:Arial, sans-serif;text-align: center;color: #3d3535;} #out-rect {border: lightgray 1px solid;border-radius: 3px; width: 60%; display: inline-block; padding: 20px; color: gray; margin:auto;} #verify-btn {background: #1cb78c;color: white;border-radius: 3px; width: 50%; min-width: 200px; height: 3em; display: inline-block; line-height: 3em;} #verify-btn a {display:inline-block;width: 100%;color: white;text-decoration:none;}</style> <h1>Welcome to EaseNote!</h1> <div id='out-rect'><p>Congratulations on reaching EaseNote, a useful website to help you manage your tasks. Your account is "
+                + user.email
+                + ". Please click on the following link to verify your email address:</p> <div id='verify-btn'><a href='http://localhost:8080/users/verifyemail/"
+                + user.token
+                + "'>VERIFY YOUR EMAIL</a></div></div>"
+            };
+    
+            sendMail(mailOptions);
+            
             res.json(true);
         }    
     });
 })
+
+var sendMail = function(options) {
+        
+    transporter.sendMail(options, function(error, info){
+        if(error){
+            console.log('Send mail error', error);
+        }else{
+            console.log('Mail sent: ' + info.response);
+        };
+    });
+}
+
 
 module.exports = router;
