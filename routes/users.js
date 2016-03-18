@@ -327,7 +327,7 @@ router.post('/sendresetmail', function(req, res) {
 })
 
 router.get('/resetpw/:hash', function(req, res) {
-    console.log("post/resetpw", req.params.hash);
+    console.log("get/users/resetpw", req.params.hash);
 
     users.findOne({resetToken: req.params.hash, resetExpire: {$gt: Date.now()}}, function(err, user) {
         if(!user) {
@@ -340,6 +340,38 @@ router.get('/resetpw/:hash', function(req, res) {
         }
     });
 })
+
+router.post('/resetpw/:hash', function(req, res) {
+    console.log("post/users/resetpw", req.params.hash);
+
+    users.findOne({resetToken: req.params.hash, resetExpire: {$gt: Date.now()}}, function(err, user) {
+        
+        // this should not happen, because already verified in 'get/users/resetpw'
+        if(!user) {
+            console.log("Invalid approach!");
+            res.render('resetpw', {user: null});
+        }
+
+        // this should not happed, because already verified in resetpw.ejs
+        else if(req.body.newPw1 !== req.body.newPw2) {
+            console.log('two new password not match');
+            res.status(500).send('two new password not match');
+        }
+        
+        // save new password to DB
+        else {
+            console.log("post/users/resetpw", req.body.newPw1, req.body.newPw2);
+            // convert plain text password into hash
+            var salt = bcrypt.genSaltSync(10);
+            var hash = bcrypt.hashSync(req.body.newPw1, salt);
+            user.password = hash;
+            
+            user.save();
+            res.render('feedback', {title: "Congratulation!", message: "Your Easenote password has been changed successfully, you can visit <a href='http://localhost:3000'>Easenote</a> and login now!"});
+        }
+    });
+})
+
 
 
 module.exports = router;

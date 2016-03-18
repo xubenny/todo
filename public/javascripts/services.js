@@ -70,9 +70,11 @@ todoApp.factory('user', ['$http', function($http) {
         // success callback
         function(res) {
             console.log("get/users/logout success");
-            self.logined = false;
-            self.tasks.copy([]);
         });     
+
+        // logout, whether success or fail logout(maybe already session expire)
+        self.logined = false;
+        self.tasks.copy([]);
     }
     
     //--------------------- extend javascript array method ---------------------
