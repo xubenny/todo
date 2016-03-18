@@ -58,7 +58,7 @@ passport.use(new passportLocal.Strategy({
             }
             // passowrd not correct
             else if(!bcrypt.compareSync(password, user.password)) {
-                don(null, null);
+                done(null, null);
             }
             else {
                 done(null, {email: user.email});
@@ -234,6 +234,40 @@ router.get('/verifyemail/:hash', function(req, res) {
     });
     
 })
+
+router.post('/changepw', function(req, res) {
+
+    console.log("change password", req.body, req.user);
+
+    if(!req.isAuthenticated()) {
+        res.status(401).send("Unauthorized");
+        return;
+    }
+    
+    users.findOne({email: req.user.email}, function(err, user) {
+
+        // email doesn't exist, should not happen because already check authentiacated
+        if(!user) {
+            res.status(401).send("Unauthorized");
+        }
+        
+        // passowrd not correct
+        else if(!bcrypt.compareSync(req.body.oldPw, user.password)) {
+            res.status(401).send("Unauthorized");
+        }
+        else {
+            // convert plain text password into hash
+            var salt = bcrypt.genSaltSync(10);
+            var hash = bcrypt.hashSync(req.body.newPw, salt);
+            user.password = hash;
+            
+            // update to DB
+            user.save();
+            res.json(true);
+        }
+    });
+})
+
 
 
 module.exports = router;

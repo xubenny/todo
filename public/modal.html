@@ -79,3 +79,47 @@
     </div>
   </div>
 </div>
+
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changepw" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          
+        <h4 class="modal-title">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Change Password
+          </h4>
+      </div>
+      <div class="modal-body">
+          <form id="changePwForm" role="form" ng-submit="changePassword(old, new1)" >
+              
+              <div class="form-group">
+                  <label>Old Password</label>
+                  <input type="password" class="form-control" ng-model="old" required autofocus />
+              </div>
+              
+              <div class="form-group">
+                  <label>New Password</label>
+                  <input type="password" class="form-control" ng-model="new1" required />
+                  <span class="red-color" ng-show="new1 && new1 === old">New passowrd should not same as old password</span>
+              </div>
+              
+              <div class="form-group">
+                  <label>New Password Again</label>
+                  <input type="password" class="form-control" ng-model="new2" required />
+                  <span class="red-color" ng-show="new2 && new2 !== new1">New password doesn't match</span>
+              </div>
+              
+              <div class="form-group">
+                  <button type="submit" class="btn btn-success btn-block" ng-disabled="!old || !new1 || new1 === old || new2 !== new1">Submit</button>
+              </div>
+                  
+          </form>
+
+￼￼￼      </div>
+    </div>
+  </div>
+</div>

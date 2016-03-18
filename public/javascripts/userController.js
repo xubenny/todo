@@ -83,6 +83,29 @@ todoApp.controller('userController', ['$scope', '$http', 'user', function($scope
         );
     }
     
+    $scope.changePassword = function(oldPw, newPw) {
+        
+        $http.post('users/changepw', {oldPw: oldPw, newPw: newPw}).then(
+            
+            // success call back
+            function(res) {
+                console.log("post/users/changepw success");
+                $("#changepw").modal('hide');
+            },
+            
+            // fail call back
+            function(res) {
+                console.log("post/users/changepw fail");
+                
+                // tell user fail to change password
+                if($("#changePwFail").length === 0) {
+                    $("#changePwForm").prepend("<div class='alert alert-danger alert-dismissible' id='changePwFail' role='alert'> <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>Fail, please input correct password.</div>");
+                }
+
+                // focus on autofocus element
+                $('#signup').find('[autofocus]').focus();
+            })
+    }
     
     // for nav bar display user login status
     $scope.isLogined = function() {
