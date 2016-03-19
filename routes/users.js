@@ -380,5 +380,69 @@ router.post('/addtask', function(req, res) {
     res.json(true);
 })
 
+router.post('/updatetask', function(req, res) {
+    
+    if(!req.isAuthenticated()) {
+        res.status(401).send("Unauthorized");
+        return;
+    }
+    
+    console.log("post/users/updatetask", req.body);
+    
+    // find the task from DB
+    tasks.findOne({email: req.user.email, time: req.body.time}, function(err, task) {
+        if(!task) {
+            res.status(500).send("task doesn't exist");
+        }
+        else {
+            task.content = req.body.content;
+            task.status = req.body.status;
+            
+            // save to DB
+            task.save();
+
+            res.json(true);
+        }
+    });
+})
+
+router.post('/removetask', function(req, res) {
+    
+    if(!req.isAuthenticated()) {
+        res.status(401).send("Unauthorized");
+        return;
+    }
+    
+    console.log("post/users/removetask", req.body);
+    
+    // find the task from DB
+    tasks.findOne({email: req.user.email, time: req.body.time}, function(err, task) {
+        if(!task) {
+            res.status(500).send("task doesn't exist");
+        }
+        else {
+            
+            // delete from DB
+            task.remove();
+
+            res.json(true);
+        }
+    });
+})
+
+router.get('/cleartrash', function(req, res) {
+    
+    if(!req.isAuthenticated()) {
+        res.status(401).send("Unauthorized");
+        return;
+    }
+    
+    console.log("post/users/cleartrash");
+    
+    // remove the tasks from DB
+    tasks.remove({email: req.user.email, status: 'deleted'}, function(err) {
+        res.json(true);
+    });
+})
 
 module.exports = router;
