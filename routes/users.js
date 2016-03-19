@@ -86,7 +86,7 @@ passport.deserializeUser(function(email, done) {
     })
 });
 
-//-------------------- router --------------------
+//-------------------- router ACCOUNT action request --------------------
 
 router.post('/login', passport.authenticate('local'), function(req, res) {
 
@@ -97,23 +97,6 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
     console.log("success", req.user);
 })
 
-router.post('/addtask', function(req, res) {
-    
-    if(!req.isAuthenticated()) {
-        res.status(401).send("Unauthorized");
-        return;
-    }
-    
-    var task = req.body;
-    task.email = req.user.email;
-
-    console.log("post/users/addtask", task);
-    
-    // use mongoose method insert a doc to DB
-    tasks(task).save();
-    
-    res.json(true);
-})
 
 router.get('/getstatus', function(req, res) {
     
@@ -135,20 +118,6 @@ router.get('/logout', function(req, res) {
     console.log("get/users/logout");
     req.logout();
     res.json(true);
-})
-
-router.get('/gettasks', function(req, res) {
-    
-    if(!req.isAuthenticated()) {
-        res.status(401).send("Unauthorized");
-        return;
-    }
-    
-    console.log('get/users/gettasks');
-    tasks.find({email: req.user.email}, {_id:0, content:1, status:1, time:1}, function(err, tasklist) {
-        res.json(tasklist);
-    })
-
 })
 
 router.post('/signup', function(req, res) {
@@ -213,7 +182,7 @@ var sendMail = function(options, callback) {
     })
 }
 
-
+// after signup, user receive a verify mail with a link, this function handle the link
 router.get('/verifyemail/:hash', function(req, res) {
     var hash = req.params.hash;
     
@@ -244,6 +213,7 @@ router.get('/verifyemail/:hash', function(req, res) {
     
 })
 
+// after user logined, they can change password
 router.post('/changepw', function(req, res) {
 
     console.log("change password", req.body, req.user);
@@ -277,6 +247,8 @@ router.post('/changepw', function(req, res) {
     });
 })
 
+
+// before login, user can ask for send a reset password email
 router.post('/sendresetmail', function(req, res) {
     
     var email = req.body.email;
@@ -326,6 +298,7 @@ router.post('/sendresetmail', function(req, res) {
     });
 })
 
+// when reset password link is access
 router.get('/resetpw/:hash', function(req, res) {
     console.log("get/users/resetpw", req.params.hash);
 
@@ -341,6 +314,7 @@ router.get('/resetpw/:hash', function(req, res) {
     });
 })
 
+// when user input new password for reset
 router.post('/resetpw/:hash', function(req, res) {
     console.log("post/users/resetpw", req.params.hash);
 
@@ -372,6 +346,39 @@ router.post('/resetpw/:hash', function(req, res) {
     });
 })
 
+//-------------------- router TASK action request --------------------
+
+router.get('/gettasks', function(req, res) {
+    
+    if(!req.isAuthenticated()) {
+        res.status(401).send("Unauthorized");
+        return;
+    }
+    
+    console.log('get/users/gettasks');
+    tasks.find({email: req.user.email}, {_id:0, content:1, status:1, time:1}, function(err, tasklist) {
+        res.json(tasklist);
+    })
+
+})
+
+router.post('/addtask', function(req, res) {
+    
+    if(!req.isAuthenticated()) {
+        res.status(401).send("Unauthorized");
+        return;
+    }
+    
+    var task = req.body;
+    task.email = req.user.email;
+
+    console.log("post/users/addtask", task);
+    
+    // use mongoose method insert a doc to DB
+    tasks(task).save();
+    
+    res.json(true);
+})
 
 
 module.exports = router;
