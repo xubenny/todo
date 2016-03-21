@@ -1,6 +1,11 @@
 # todo
 a tasks management tool
 
+## How to run in local mode
+1. in MacOS, Open a terminal window, run mongod
+2. Open another window, enter 'todo' path, run DEBUG=todo:* npm start
+3. Open a browser, goto localhost:3000
+
 ## Front end
 javascript, angularjs
 

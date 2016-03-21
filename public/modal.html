@@ -12,7 +12,7 @@
       </div>
       <div class="modal-body">
           <!-- form id is for display error message in controller -->
-          <form id="signinForm" role="form" ng-submit="onSignin(email, pw)" ng-init="email='xbl@mail.com';pw='123'">
+          <form id="signinForm" role="form" ng-submit="onSignin(email, pw)">
               
               <!-- Email address -->
               <div class="form-group">
@@ -24,7 +24,7 @@
               <div class="form-group">
                   <label>Password</label>
                   
-                  <span style="float:right;"><a href="#" data-dismiss="modal" data-toggle="modal" ng-click="showModal('#forgotpw')">Forgot password?</a></span>
+                  <span style="float:right;"><a href="#" data-dismiss="modal" ng-click="showModal('#forgotpw')">Forgot password?</a></span>
                   
                   <input type="password" class="form-control" ng-model="pw" required>
               </div>
@@ -36,7 +36,7 @@
               
               <!-- Sign up -->
               <div class="form-group">
-                  <button type="button" class="btn btn-default center-block">Create an account</button>
+                  <button type="button" class="btn btn-default center-block" data-dismiss="modal" ng-click="showModal('#signup')">Create an account</button>
               </div>
           </form>
 
