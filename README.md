@@ -56,4 +56,17 @@ describe("taskController", function() {
 })
 
 #### Run
+(no need run server)
 karma start
+
+## e2e test
+1. run server
+mongod
+DEBUG=todo:* npm start
+
+2. run Selenium Service
+webdriver-manager start
+
+3. run e2e test
+cd e2etest
+protractor conf.js
