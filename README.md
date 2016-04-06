@@ -70,3 +70,38 @@ webdriver-manager start
 3. run e2e test
 cd e2etest
 protractor conf.js
+
+## Run on OpenShift
+### Modify Source Code
+1. package.json
+scripts.start: "node ./bin/www" // do not use nodemon
+main: "./bin/www"
+
+2. bin/www
+set real port, and listen ip address
+
+3. MongoDB
+connect to real host and port
+
+4. e2e test
+browser.get real url address
+
+### Uplode to OpenShift
+1. Register an account
+get 3 free application
+
+2. Generate SSH key
+https://developers.openshift.com/managing-your-applications/client-tools.html
+
+3. Create Application
+OpenShift web console
+and create a clone in local
+
+4. Add MongoDB and RockMongo Cartridge
+OpenShift web console
+
+5. Commit and Sync
+Github Desktop, Add the correspondence project
+
+### Run online
+just open http://easenote-bennyxu.rhcloud.com in browser 

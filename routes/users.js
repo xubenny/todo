@@ -6,10 +6,23 @@ var passport = require('passport');
 var passportLocal = require('passport-local');
 var expressSession = require('express-session');
 
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcrypt-nodejs');
+
+var appUrl = "http://localhost:3000";
+if(process.env.OPENSHIFT_APP_DNS)
+    // protocol should be add, otherwise DNS will be parse to unexpected result
+    appUrl = 'http://' + process.env.OPENSHIFT_APP_DNS;
 
 //-------------------- mongoDB -------------------
-mongoose.connect('mongodb://localhost/todo');
+
+var dbName = 'mongodb://localhost/easenote';
+
+//take advantage of openshift env vars when available:
+if(process.env.OPENSHIFT_MONGODB_DB_URL){
+  dbName = 'mongodb://admin:SQAkptq3BY83@' + process.env.OPENSHIFT_MONGODB_DB_HOST + ':' + process.env.OPENSHIFT_MONGODB_DB_PORT + '/easenote';
+}
+
+mongoose.connect(dbName);
 var users = mongoose.model('users', {
     email: String,
     password: String,
@@ -150,12 +163,14 @@ router.post('/signup', function(req, res) {
             var mailOptions = {
                 from: 'Easenote@gmail.com', // sender address
 //                to: user.email,
-                to: 'xubinglin@hotmail.com', // list of receivers
+                to: 'xubinglin@hotmail.com', // for debuging
                 subject: 'Confirm your email address on EaseNote', // Subject line
                 html: "<style>body {font-family:Arial, sans-serif;text-align: center;color: #3d3535;} #out-rect {border: lightgray 1px solid;border-radius: 3px; width: 60%; display: inline-block; padding: 20px; color: gray; margin:auto;} #verify-btn {background: #1cb78c;color: white;border-radius: 3px; width: 50%; min-width: 200px; height: 3em; display: inline-block; line-height: 3em;} #verify-btn a {display:inline-block;width: 100%;color: white;text-decoration:none;}</style> <h1>Welcome to EaseNote!</h1> <div id='out-rect'><p>Congratulations on reaching EaseNote, a useful website to help you manage your tasks. Your account is "
                 + user.email
-                + ". Please click on the following link to verify your email address:</p> <div id='verify-btn'><a href='http://localhost:3000/users/verifyemail/"
-                + user.activeToken.replace('/', '%2F')
+                + ". Please click on the following link to verify your email address:</p> <div id='verify-btn'><a href='"
+                + appUrl
+                + "/users/verifyemail/"
+                + user.activeToken
                 + "'>VERIFY YOUR EMAIL</a></div></div>"
             };
     
@@ -183,7 +198,8 @@ var sendMail = function(options, callback) {
 }
 
 // after signup, user receive a verify mail with a link, this function handle the link
-router.get('/verifyemail/:hash', function(req, res) {
+// Express internally uses path-to-regexp to do path matching.
+router.get('/verifyemail/:hash([^/]+/[^/]+)', function(req, res) {
     var hash = req.params.hash;
     
     console.log("verifyemail", hash);
@@ -199,7 +215,9 @@ router.get('/verifyemail/:hash', function(req, res) {
         else if (user.active) {
             console.log("verify email: already active");
 
-            res.render('feedback', {title: 'Already verified', message: "You had already verified your Email address. Please visit <a href='http://localhost:3000'>Easenote</a> and login."});
+            res.render('feedback', {title: 'Already verified', message: "You had already verified your Email address. Please visit <a href='"
+                                    + appUrl
+                                    + "'>Easenote</a> and login."});
         }
         else {
             console.log("verify email: success");
@@ -207,7 +225,9 @@ router.get('/verifyemail/:hash', function(req, res) {
             user.active = true;
             // update to mongoDB
             user.save();
-            res.render('feedback', {title: "Congratulation!", message: "Your Easenote account has been activated, you can visit <a href='http://localhost:3000'>Easenote</a> and login now!"})
+            res.render('feedback', {title: "Congratulation!", message: "Your Easenote account has been activated, you can visit <a href='"
+                                    + appUrl
+                                    + "'>Easenote</a> and login now!"})
         }
     });
     
@@ -279,10 +299,11 @@ router.post('/sendresetmail', function(req, res) {
                 " Easenote Account, click the link below:\n\n"
                 
                 // in productive environment, email will display a hyperlink instead plain text
-                + "http://localhost:3000/users/resetpw/"
+                + appUrl
+                + "/users/resetpw/"
                 
                 // replace all '/' by '%2F', so that server can read the whole hash as one parameter
-                + user.resetToken.replace(/\//g, '%2F') + "\n\n"
+                + user.resetToken + "\n\n"
                 + "Sincerely,\n"
                 + "Easenote"
             };
@@ -299,7 +320,8 @@ router.post('/sendresetmail', function(req, res) {
 })
 
 // when reset password link is access
-router.get('/resetpw/:hash', function(req, res) {
+// Express internally uses path-to-regexp to do path matching.
+router.get('/resetpw/:hash([^/]+/[^/]+)', function(req, res) {
     console.log("get/users/resetpw", req.params.hash);
 
     users.findOne({resetToken: req.params.hash, resetExpire: {$gt: Date.now()}}, function(err, user) {
@@ -315,7 +337,7 @@ router.get('/resetpw/:hash', function(req, res) {
 })
 
 // when user input new password for reset
-router.post('/resetpw/:hash', function(req, res) {
+router.post('/resetpw/:hash([^/]+/[^/]+)', function(req, res) {
     console.log("post/users/resetpw", req.params.hash);
 
     users.findOne({resetToken: req.params.hash, resetExpire: {$gt: Date.now()}}, function(err, user) {
@@ -341,7 +363,9 @@ router.post('/resetpw/:hash', function(req, res) {
             user.password = hash;
             
             user.save();
-            res.render('feedback', {title: "Congratulation!", message: "Your Easenote password has been changed successfully, you can visit <a href='http://localhost:3000'>Easenote</a> and login now!"});
+            res.render('feedback', {title: "Congratulation!", message: "Your Easenote password has been changed successfully, you can visit <a href='"
+                                    + appUrl
+                                    + "'>Easenote</a> and login now!"});
         }
     });
 })

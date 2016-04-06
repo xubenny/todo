@@ -3,7 +3,7 @@
 todoApp.factory('user', ['$http', function($http) {
     var user = {
         logined: false,
-        email: "xbl@mail.com",
+        email: "",
         // tasks array address will be shared to controllers
         tasks: []
     };
