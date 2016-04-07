@@ -17,11 +17,15 @@
 
         <!------------------- App js and css file ---------------------------->
         <script src="javascripts/taskController.js"></script>
+        <script src="javascripts/userController.js"></script>
+        <script src="javascripts/services.js"></script>
         <link rel="stylesheet" href="stylesheets/style.css">
     </head>
     
     <body>
 
+        <div ng-controller="userController">
+    
         <!------------------- Navigation bar and menu ------------------------>
         <nav class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
@@ -31,22 +35,40 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;Todo</a>
+                    <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;Easenote</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#" data-toggle="modal" data-target="#signin">Sign in</a></li>
-                        <li><a href="#" data-toggle="modal" data-target="#signup">Join</a></li>
+                        
+                        <li ng-show="!isLogined()"><a href="#" data-toggle="modal" ng-click="showModal('#signin')">Log in</a></li>
+                        <li ng-show="!isLogined()"><a href="#" data-toggle="modal" ng-click="showModal('#signup')">Sign up</a></li>
+                        <li ng-show="isLogined()" class="dropdown">
+                            
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{account()}} <span class="caret"></span></a>
+                            
+                              <ul class="dropdown-menu">
+                                <li><a href="#" data-toggle="modal" ng-click="showModal('#changepw')">Change Password</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#" ng-click="logout()">Log out</a></li>
+                              </ul>
+                            
+                        </li>
+                        
                     </ul>
                 </div>
             </div>
         </nav>
         
+        <!------------------------------ modal ------------------------------->
+        <div ng-include="'modal.html'"></div>
+
+        </div>
+        
         <!-------------------------- main content --------------------------->
         <div class="container" id="mainContainer" ng-controller="taskController">
             
             <!-- Title -->
-            <h1 class="center margin-top-md margin-bottom-md"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;To Do List</h1>
+            <h1 class="center margin-top-md margin-bottom-md"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;Easenote Task List</h1>
             
             
             <!-- The action row, including add, search, filter, and clear trash -->
@@ -142,7 +164,7 @@
             <hr>
             
             <!-- Table body, repeat rows by using ng-repeat -->
-            <div class="row tableRow animate-list {{task.status}}" ng-repeat="task in filteredTasks = (tasks | filter: {content: keyword, status: filter})" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
+            <div class="row tableRow animate-list {{task.status}}" ng-repeat="task in filteredTasks = (tasks | filter: {content: keyword, status: filter} | orderBy: '-time')" ng-mouseover="activeItem=$index" ng-mouseleave="activeItem=-1">
 
                 <!-- form is for connecting input area and edit done button -->
                 <form role="form">                    
@@ -200,12 +222,13 @@
             </div>
             
         </div> <!-- end of main content -->
+                
             
         <!----------------------------- footer ---------------------------->          
         <hr>
         <footer>
             <p class="center">&copy; 2016 Benny Xu</p>
-        </footer>
+        </footer> 
         
     </body>
 </html>

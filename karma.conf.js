@@ -19,7 +19,9 @@ module.exports = function(config) {
       'node_modules/angular/angular.js',
       'https://code.angularjs.org/1.5.0-rc.0/angular-animate.min.js',
       'node_modules/angular-mocks/angular-mocks.js',
-      'public/javascripts/*.js',
+      'public/javascripts/taskController.js',
+      'public/javascripts/userController.js',
+      'public/javascripts/services.js',
       'unittest/*.js'
     ],
 

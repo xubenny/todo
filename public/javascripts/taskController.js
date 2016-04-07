@@ -2,7 +2,7 @@
 
 var todoApp = angular.module("todoApp", ['ngAnimate']);
 
-todoApp.controller("taskController", ["$scope", "$animate", function($scope, $animate) {
+todoApp.controller("taskController", ["$scope", "$animate", "$http", "user", function($scope, $animate, $http, user) {
     
     // constant
     $scope.statusIcon = {
@@ -11,30 +11,29 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
     };
     
     //------------------------ initial varibles --------------------------------
-    // task list after filter
-    $scope.tasks = [
-        {content: "[demo] Pay monthly credit card",
-        status: "ongoing"},
-        {content: "[demo] Clean house",
-        status: "finished"},
-        {content: "[demo] Return books to library",
-        status: "deleted"},
-        {content: "[demo] Ask David about the book study material",
-        status: "ongoing"},
-        {content: "[demo] Pick up Roger from Suzanne middle school",
-        status: "ongoing"},
-        {content: "[demo] Prepare donation check for church",
-        status: "finished"}
-        ];
-
-    // fill background full of window size
-    $("#mainContainer").css("min-height", $(window).height());
+    
+    // share tasks address with user service so that other controller can access
+    $scope.tasks = user.tasks;    
     
     //------------------------- define function -----------------------------
 
     // when "Add New Task" button is pressed
     $scope.onAddTask = function() {
 
+        // can add task only after logined
+        if(!user.logined) {
+            // remove error feedback of last time
+            $(".alert-dismissible").remove();
+
+            // Every time a modal is shown, if it has an autofocus element, focus on it.
+            $('#signin').on('shown.bs.modal', function () { 
+                $(this).find('[autofocus]').focus();
+            })
+            .modal('show');
+            
+            return;
+        }
+        
         // display input bar
         $scope.inputTask = true;
         // deley a little to wait for the animation start, otherwise fail to focus
@@ -46,17 +45,35 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
     // when "Done" button on right of new task input bar is pressed
     // new task insert in the front
     $scope.onAddDone = function() {
-        // unshift is an js array method to add new items to the beginning
-        $scope.tasks.unshift({
-            content: $scope.content,
-            status: "ongoing"}); 
+        
+        // can add task only after logined
+        if(!user.logined)
+            return;
 
-        // switch to filter "ongoing" so that the new task can be shown up
-        if($scope.filter !== '' && $scope.filter !== 'ongoing') {
-            $scope.filter = "ongoing";
-        }
-        $scope.content = "";
-        $('#inputTask').focus();
+        var task = {content: $scope.content,
+                    status: "ongoing",
+                    time: Date.now()
+                   };
+        console.log("onAddDone", task);
+
+        // upload to server
+        $http.post('/users/addtask', task).then(
+            function (res) {
+                // unshift is an js array method to add new items to the beginning
+                $scope.tasks.unshift(task); 
+
+                // switch to filter "ongoing" so that the new task can be shown up
+                if($scope.filter !== '' && $scope.filter !== 'ongoing') {
+                    $scope.filter = "ongoing";
+                }
+                $scope.content = "";
+                $('#inputTask').focus();
+            },
+            function (res) {
+                // session expire, should logout
+                user.logout();
+            }
+        );
     }
 
     // update the status
@@ -72,6 +89,19 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
                 task.status = "finished";
                 break;
         }
+        
+        if(!user.logined)
+            return;
+         
+        // upload to server
+        $http.post('/users/updatetask', task).then(
+            function (res) {
+            },
+            function (res) {
+                // session expire, should logout
+                user.logout();
+            }
+        );   
     }
 
     // permenent remove a deleted task, or temporary mark a normal task
@@ -79,9 +109,35 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
         if(task.status === "deleted") {
             var index = $scope.tasks.indexOf(task);
             $scope.tasks.splice(index, 1);
+
+            if (!user.logined)
+                return;
+            
+            // upload to server
+            $http.post('/users/removetask', task).then(
+                function (res) {
+                },
+                function (res) {
+                    // session expire, should logout
+                    user.logout();
+                }
+            );   
         }
         else {
             task.status = "deleted";
+            
+            if (!user.logined)
+                return;
+            
+            // upload to server
+            $http.post('/users/updatetask', task).then(
+                function (res) {
+                },
+                function (res) {
+                    // session expire, should logout
+                    user.logout();
+                }
+            );   
         }
     }
     
@@ -91,10 +147,26 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
         $scope.tasks = $scope.tasks.filter(function(task) {
             return task.status !== "deleted";
         });
+        // should keep user service and controller share the same address
+        user.tasks = $scope.tasks;
+
+        if (!user.logined)
+            return;
+            
+        // upload to server
+        $http.get('/users/cleartrash').then(
+            function (res) {
+            },
+            function (res) {
+                // session expire, should logout
+                user.logout();
+            }
+        );   
     }
 
     // when "Edit" icon in task item is pressed
     $scope.onEdit = function(index) {
+
         $scope.editItem = index;
         // deley a little to wait for the animation start, otherwise fail to focus
         setTimeout(function() {
@@ -106,10 +178,27 @@ todoApp.controller("taskController", ["$scope", "$animate", function($scope, $an
     // when "Done" button in task item is pressed
     // model will automatic sync with resultTasks, so tasks, bacause they share same objects
     $scope.onEditDone = function(task) {
+        
         if (task.content == '')
             return;
-        
+
+        // exit edit mode
         $scope.editItem = -1;
+        
+        // if not logined, just modified local data
+        if(!user.logined)
+            return;
+        
+        // upload to server
+        $http.post('/users/updatetask', task).then(
+            function (res) {
+            },
+            function (res) {
+                // session expire, should logout
+                user.logout();
+            }
+        );
+        
     }
     
     // clear content if right side of search input box is clicked 

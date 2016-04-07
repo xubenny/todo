@@ -1,0 +1,185 @@
+<!-- Sign in Modal -->
+<div class="modal fade" id="signin" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          
+        <h4 class="modal-title">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Sign in to Easenote
+        </h4>
+      </div>
+      <div class="modal-body">
+          <!-- form id is for display error message in controller -->
+          <form id="signinForm" role="form" ng-submit="onSignin(email, pw)">
+              
+              <!-- Email address -->
+              <div class="form-group">
+                  <label>Email address</label>
+                  <input type="email" class="form-control" ng-model="email" required autofocus>
+              </div>
+              
+              <!-- Password -->
+              <div class="form-group">
+                  <label>Password</label>
+                  
+                  <span style="float:right;"><a href="#" data-dismiss="modal" ng-click="showModal('#forgotpw')">Forgot password?</a></span>
+                  
+                  <input type="password" class="form-control" ng-model="pw" required>
+              </div>
+              
+              <!-- Sign in -->
+              <div class="form-group">
+                  <button type="submit" class="btn btn-success btn-block">Sign In</button>
+              </div>
+              
+              <!-- Sign up -->
+              <div class="form-group">
+                  <button type="button" class="btn btn-default center-block" data-dismiss="modal" ng-click="showModal('#signup')">Create an account</button>
+              </div>
+          </form>
+
+￼￼￼      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sign up Modal -->
+<div class="modal fade" id="signup" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          
+        <h4 class="modal-title">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Create an account of Easenote
+          </h4>
+      </div>
+      <div class="modal-body">
+          <form id="signupForm" role="form" ng-submit="onSignup(email, pw)" >
+              
+              <!-- email -->
+              <div class="form-group">
+                  <label>Email address</label>
+                  <input type="email" class="form-control" ng-model="email" required autofocus>
+              </div>
+              
+              <!-- password -->
+              <div class="form-group">
+                  <label>Password</label>
+                  <input type="password" class="form-control" ng-model="pw" required>
+              </div>
+              
+              <!-- submit button -->
+              <div class="form-group">
+              <button type="submit" class="btn btn-success btn-block">Sign Up</button>
+              </div>
+          </form>
+
+￼￼￼      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changepw" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          
+        <h4 class="modal-title">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Change Password
+          </h4>
+      </div>
+      <div class="modal-body">
+          <form id="changePwForm" role="form" ng-submit="changePassword(old, new1)" >
+              
+              <div class="form-group">
+                  <label>Old Password</label>
+                  <input type="password" class="form-control" ng-model="old" required autofocus />
+              </div>
+              
+              <div class="form-group">
+                  <label>New Password</label>
+                  <input type="password" class="form-control" ng-model="new1" required />
+                  <span class="red-color" ng-show="new1 && new1 === old">New passowrd should not same as old password</span>
+              </div>
+              
+              <div class="form-group">
+                  <label>New Password Again</label>
+                  <input type="password" class="form-control" ng-model="new2" required />
+                  <span class="red-color" ng-show="new2 && new2 !== new1">New password doesn't match</span>
+              </div>
+              
+              <div class="form-group">
+                  <button type="submit" class="btn btn-success btn-block" ng-disabled="!old || !new1 || new1 === old || new2 !== new1">Submit</button>
+              </div>
+                  
+          </form>
+
+￼￼￼      </div>
+    </div>
+  </div>
+</div>
+
+<!-- forgot Password Modal -->
+<div class="modal fade" id="forgotpw" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          
+        <h4 class="modal-title">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Forgot Password?
+          </h4>
+      </div>
+      <div class="modal-body">
+
+          <p>Please provide your Email address, we will send you a link to reset your password.</p>
+          <br/>
+          
+          <form role="form" name="sendmailform" ng-submit="sendResetMail(email)" >
+          
+                <div class="form-group">
+                    <label>Email address</label>
+                    <input type="email" class="form-control" ng-model="email" required autofocus />
+                </div>
+              
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success btn-block" ng-disabled="!sendmailform.$valid">Send Email</button>
+                </div>
+          
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mail Sent: reset Password feedback Modal -->
+<div class="modal fade" id="mailsent" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          
+        <h4 class="modal-title">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            Reset Password
+          </h4>
+      </div>
+      <div class="modal-body">
+
+          <h4>{{feedbackTitle}}</h4>
+          <p>{{feedbackContent}}</p>
+
+          <button type="button" class="btn btn-primary btn-block" data-dismiss="modal">Close</button>
+￼￼￼      </div>
+    </div>
+  </div>
+</div>
