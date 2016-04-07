@@ -5,6 +5,9 @@ todoApp.controller('userController', ['$scope', '$http', 'user', function($scope
 
     // if seperate the focus callback and show function, the focus will not work
     $scope.showModal = function(id) {
+        
+        // remove error feedback of last time
+        $(".alert-dismissible").remove();
 
         // Every time a modal is shown, if it has an autofocus element, focus on it.
         $(id).on('shown.bs.modal', function () { 

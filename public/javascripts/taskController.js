@@ -22,7 +22,15 @@ todoApp.controller("taskController", ["$scope", "$animate", "$http", "user", fun
 
         // can add task only after logined
         if(!user.logined) {
-            $('#signin').modal();
+            // remove error feedback of last time
+            $(".alert-dismissible").remove();
+
+            // Every time a modal is shown, if it has an autofocus element, focus on it.
+            $('#signin').on('shown.bs.modal', function () { 
+                $(this).find('[autofocus]').focus();
+            })
+            .modal('show');
+            
             return;
         }
         

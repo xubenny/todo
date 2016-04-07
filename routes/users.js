@@ -162,10 +162,10 @@ router.post('/signup', function(req, res) {
             // send a active mail to user
             var mailOptions = {
                 from: 'Easenote@gmail.com', // sender address
-//                to: user.email,
-                to: 'xubinglin@hotmail.com', // for debuging
+                to: user.email,
+//                to: 'xubinglin@hotmail.com', // for debuging
                 subject: 'Confirm your email address on EaseNote', // Subject line
-                html: "<style>body {font-family:Arial, sans-serif;text-align: center;color: #3d3535;} #out-rect {border: lightgray 1px solid;border-radius: 3px; width: 60%; display: inline-block; padding: 20px; color: gray; margin:auto;} #verify-btn {background: #1cb78c;color: white;border-radius: 3px; width: 50%; min-width: 200px; height: 3em; display: inline-block; line-height: 3em;} #verify-btn a {display:inline-block;width: 100%;color: white;text-decoration:none;}</style> <h1>Welcome to EaseNote!</h1> <div id='out-rect'><p>Congratulations on reaching EaseNote, a useful website to help you manage your tasks. Your account is "
+                html: "<style>body {font-family:Arial, sans-serif;text-align: center;color: #3d3535;} #out-rect {border: lightgray 1px solid;border-radius: 3px; width: 60%; display: inline-block; padding: 20px; color: gray; margin:auto;} #verify-btn {background:#1cb78c; color:white; border-radius:3px; text-align:center; width: 50%; min-width:200px; height:3em; display:inline-block; line-height: 3em;} #verify-btn a {display:inline-block;width: 100%;color: white;text-decoration:none;}</style> <h1>Welcome to EaseNote!</h1> <div id='out-rect'><p>Congratulations on reaching EaseNote, a useful website to help you manage your tasks. Your account is "
                 + user.email
                 + ". Please click on the following link to verify your email address:</p> <div id='verify-btn'><a href='"
                 + appUrl
@@ -199,7 +199,7 @@ var sendMail = function(options, callback) {
 
 // after signup, user receive a verify mail with a link, this function handle the link
 // Express internally uses path-to-regexp to do path matching.
-router.get('/verifyemail/:hash([^/]+/[^/]+)', function(req, res) {
+router.get('/verifyemail/:hash([^]+)', function(req, res) {
     var hash = req.params.hash;
     
     console.log("verifyemail", hash);
@@ -291,8 +291,8 @@ router.post('/sendresetmail', function(req, res) {
             
             var mailOptions = {
                 from: 'Easenote@gmail.com', // sender address
-//                to: email,
-                to: 'xubinglin@hotmail.com', // list of receivers
+                to: user.email,
+//                to: 'xubinglin@hotmail.com', // list of receivers
                 subject: 'Easenote Password Assistance', // Subject line
                 text: "To initiate the password reset process for your "
                 + email + 
@@ -321,7 +321,7 @@ router.post('/sendresetmail', function(req, res) {
 
 // when reset password link is access
 // Express internally uses path-to-regexp to do path matching.
-router.get('/resetpw/:hash([^/]+/[^/]+)', function(req, res) {
+router.get('/resetpw/:hash([^]+)', function(req, res) {
     console.log("get/users/resetpw", req.params.hash);
 
     users.findOne({resetToken: req.params.hash, resetExpire: {$gt: Date.now()}}, function(err, user) {
@@ -337,7 +337,7 @@ router.get('/resetpw/:hash([^/]+/[^/]+)', function(req, res) {
 })
 
 // when user input new password for reset
-router.post('/resetpw/:hash([^/]+/[^/]+)', function(req, res) {
+router.post('/resetpw/:hash([^]+)', function(req, res) {
     console.log("post/users/resetpw", req.params.hash);
 
     users.findOne({resetToken: req.params.hash, resetExpire: {$gt: Date.now()}}, function(err, user) {

@@ -99,6 +99,7 @@ and create a clone in local
 
 4. Add MongoDB and RockMongo Cartridge
 OpenShift web console
+Manage DB https://easenote-bennyxu.rhcloud.com/rockmongo/
 
 5. Commit and Sync
 Github Desktop, Add the correspondence project
